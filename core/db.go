@@ -64,6 +64,17 @@ func assignTags(t *Tea, tagNames *[]string) {
 	}
 }
 
+func addTagsToTea(teaId int, tagNames *[]string) {
+	t := &Tea{}
+	db.Find(&t, teaId)
+
+	if t.ID != 0 {
+		assignTags(t, tagNames)
+	} else {
+		panic("Чай не знайдено")
+	}
+}
+
 func getNumberOfTeas() int64 {
 	var count int64
 	db.Model(&Tea{}).Count(&count)
@@ -103,8 +114,8 @@ func GetTeasWithFilters(filters [][]string, sorting []string) []Tea {
 	query := db.Model(&Tea{})
 
 	for _, filter := range filters {
-		if numVal, ok := ParseNumber(filter[1]); ok {
-			query.Where(fmt.Sprintf("%s %d ?", filter[0], numVal), filter[2])
+		if strings.Contains(filter[2], ",") {
+			query.Where(fmt.Sprintf("%s %s ?", filter[0], filter[1]), strings.Split(filter[2], ","))
 		} else {
 			query.Where(fmt.Sprintf("%s %s ?", filter[0], filter[1]), filter[2])
 		}
@@ -119,8 +130,45 @@ func GetTeasWithFilters(filters [][]string, sorting []string) []Tea {
 	return teas
 }
 
+func getTeaIdsByTagNames(tagNames []string) []int {
+	var whereClause string = ""
+
+	for idx, tag := range tagNames {
+		if idx > 0 {
+			whereClause += "OR name LIKE '%" + tag + "%' "
+		} else {
+			whereClause += "name LIKE '%" + tag + "%' "
+		}
+	}
+
+	tagIDs := db.Model(&Tag{}).Select("id").Where(whereClause)
+	teaIDs := db.Table("tea_tags").
+		Select("tea_id").
+		Where("tag_id IN (?)", tagIDs).
+		Distinct()
+
+	var teaIds []int
+
+	teaIDs.Find(&teaIds)
+
+	return teaIds
+}
+
 func deleteTea(id int) {
 	db.Delete(&Tea{}, id)
+}
+
+func brew(teaId int, weight float32) {
+	t := &Tea{}
+	db.Find(&t, teaId)
+
+	t.Stock = t.Stock - weight
+	db.Save(&t)
+
+	b := &Brew{}
+	b.TeaId = uint(teaId)
+	b.Weight = weight
+	db.Save(&b)
 }
 
 func ParseNumber(s string) (any, bool) {

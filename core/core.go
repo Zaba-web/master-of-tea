@@ -1,5 +1,7 @@
 package core
 
+import "strings"
+
 type TeaMaster struct {
 }
 
@@ -53,6 +55,19 @@ func (t TeaMaster) GetAllTeas() []Tea {
 
 func (t TeaMaster) DeleteTea(id int) {
 	deleteTea(id)
+}
+
+func (t TeaMaster) GetProductIdsByTags(tags []string) []int {
+	return getTeaIdsByTagNames(tags)
+}
+
+func (t TeaMaster) AddTag(teaId int, tagNames string) {
+	tags := strings.Split(tagNames, ",")
+	addTagsToTea(teaId, &tags)
+}
+
+func (t TeaMaster) Brew(teaId int, weight float32) {
+	brew(teaId, weight)
 }
 
 func InitCore() *TeaMaster {
