@@ -61,7 +61,7 @@ func printTabulated(key string, value string) {
 }
 
 func printTeaList(teas []core.Tea) {
-	fmt.Println("\n\nID\tНазва\t\t\tРік\tК-сть\t\tЦіна\tТеги")
+	fmt.Println("\n\nID\tРік\tК-сть\tЦіна\tНазва\t\t\tТеги")
 	for _, tea := range teas {
 		tagList := ""
 		for _, tag := range tea.Tags {
@@ -78,7 +78,7 @@ func printTeaList(teas []core.Tea) {
 			stock = colorBlack + "" + GB_GREEN + stock + colorNone
 		}
 
-		fmt.Printf("%d\t%s\t\t%d\t%s\t\t%.2f\t%s\n", tea.ID, tea.Name, tea.Year, stock, tea.PricePerGram, tagList)
+		fmt.Printf("%d\t%d\t%s\t%.2f\t%s\t\t%s\n", tea.ID, tea.Year, stock, tea.PricePerGram, tea.Name, tagList)
 	}
 }
 

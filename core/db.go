@@ -160,7 +160,11 @@ func deleteTea(id int) {
 
 func brew(teaId int, weight float32) {
 	t := &Tea{}
-	db.Find(&t, teaId)
+	db.First(&t, teaId)
+
+	if t.ID == 0 {
+		panic("Tea not found")
+	}
 
 	t.Stock = t.Stock - weight
 	db.Save(&t)

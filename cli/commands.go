@@ -183,6 +183,8 @@ func help_cmd(args *[]string) int {
 	printTabulated("Статистика:", "stats (f=поле|умова|значення) (s=поле|напрямок) (t=тег1,тег2...)")
 	printTabulated("Видалити чай:", "tea:delete id")
 	printTabulated("Додати тег:", "tea:tag:add tea=ід tag=тег")
+	printTabulated("Імпорт чаю:", "tea:import шлях до файлу")
+	printTabulated("Заварювання:", "tea:brew t=ід чаю w=маса")
 	return 0
 }
 func tea_import_cmd(args *[]string) int {
